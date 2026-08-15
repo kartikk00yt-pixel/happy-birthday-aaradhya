@@ -1,0 +1,815 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Aaradhya! 🎂✨</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Confetti Explosion Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================
+       RESET & PERFORMANCE CORE
+       ========================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #fff0f5 0%, #ffd1dc 50%, #ffe4e1 100%);
+      color: #4a4a4a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: background 1.2s ease-in-out;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.page-2-active {
+      background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #e1f5fe 100%);
+    }
+
+    /* Hardware Accelerated Ambient Glows */
+    .glowing-light {
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 1;
+      opacity: 0.5;
+      pointer-events: none;
+      will-change: transform;
+      animation: pulseGlow 8s infinite alternate ease-in-out;
+      transform: translate3d(0,0,0);
+    }
+
+    .light-1 {
+      top: 10%;
+      left: 10%;
+      background: rgba(255, 182, 193, 0.9);
+    }
+
+    .light-2 {
+      bottom: 10%;
+      right: 10%;
+      background: rgba(255, 218, 185, 0.9);
+    }
+
+    body.page-2-active .light-1 { background: rgba(129, 212, 250, 0.9); }
+    body.page-2-active .light-2 { background: rgba(179, 229, 252, 0.9); }
+
+    @keyframes pulseGlow {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(20px, -20px, 0) scale(1.2); }
+    }
+
+    /* 60FPS Canvas Overlay */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ==========================================
+       CONTAINERS & GLASSMORPHISM
+       ========================================== */
+    .page-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 780px;
+    }
+
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transform: translate3d(0, 20px, 0) scale(0.98);
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      visibility: hidden;
+      will-change: opacity, transform;
+      transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                  transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                  visibility 0.6s;
+    }
+
+    .page.active {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      pointer-events: auto;
+      position: relative;
+      visibility: visible;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 28px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      width: 100%;
+      transform: translateZ(0);
+    }
+
+    /* ==========================================
+       TYPOGRAPHY & CONTENT
+       ========================================== */
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.4rem;
+      color: #d81b60;
+      margin-bottom: 18px;
+      text-shadow: 1px 1px 2px rgba(216, 27, 96, 0.12);
+      line-height: 1.2;
+    }
+
+    .page-2-active h1 {
+      color: #0288d1;
+      text-shadow: 1px 1px 2px rgba(2, 136, 209, 0.12);
+    }
+
+    p.message {
+      font-size: 1.12rem;
+      line-height: 1.75;
+      color: #5a4b51;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .decor-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      font-size: 1.6rem;
+      margin: 12px 0;
+    }
+
+    /* ==========================================
+       BIG PINK INTRO CAKE & ANIMATIONS
+       ========================================== */
+    .big-cake-wrapper {
+      position: relative;
+      width: 220px;
+      height: 200px;
+      margin: 25px auto 20px auto;
+    }
+
+    .big-cake {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      transition: transform 0.6s ease;
+    }
+
+    .big-cake.cut-split .big-layer-left {
+      transform: translateX(-12px) rotate(-3deg);
+    }
+    .big-cake.cut-split .big-layer-right {
+      transform: translateX(12px) rotate(3deg);
+    }
+
+    .candles-row {
+      position: absolute;
+      top: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 18px;
+      z-index: 5;
+    }
+
+    .big-candle {
+      position: relative;
+      width: 12px;
+      height: 35px;
+      background: linear-gradient(to bottom, #ffecb3, #ffb300);
+      border-radius: 4px;
+    }
+
+    .big-flame {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      width: 14px;
+      height: 20px;
+      background: #ff9800;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 12px #ffc107, 0 0 20px #ff9800;
+      animation: flicker 0.8s infinite alternate ease-in-out;
+      transform: translateX(-50%);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .big-flame.out {
+      opacity: 0;
+      transform: translateX(-50%) scale(0);
+    }
+
+    .big-layer {
+      position: relative;
+      width: 100%;
+      border-radius: 12px 12px 0 0;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .big-layer-3 {
+      width: 140px;
+      height: 45px;
+      background: #f8bbd0;
+      margin: 0 auto;
+      border-bottom: 4px solid #f48fb1;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .big-layer-2 {
+      width: 170px;
+      height: 50px;
+      background: #ff80ab;
+      margin: 0 auto;
+      border-bottom: 4px solid #ff4081;
+    }
+
+    .big-layer-1 {
+      width: 200px;
+      height: 55px;
+      background: #f48fb1;
+      border-bottom: 5px solid #f06292;
+    }
+
+    .big-plate {
+      width: 230px;
+      height: 12px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      position: absolute;
+      bottom: -10px;
+      left: -15px;
+    }
+
+    /* Knife Animation */
+    .knife {
+      position: absolute;
+      top: -60px;
+      right: -20px;
+      font-size: 3.5rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 10;
+      transform: rotate(-45deg);
+      transition: all 0.6s ease;
+    }
+
+    .knife.slice-anim {
+      animation: sliceCake 1.2s forwards ease-in-out;
+    }
+
+    @keyframes sliceCake {
+      0% { opacity: 0; transform: translate(40px, -40px) rotate(-45deg); }
+      30% { opacity: 1; transform: translate(0px, 0px) rotate(-20deg); }
+      60% { transform: translate(-30px, 80px) rotate(15deg); }
+      100% { opacity: 0; transform: translate(-50px, 120px) rotate(45deg); }
+    }
+
+    /* Celebration Text Bounce */
+    .celebration-text {
+      display: none;
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.2rem;
+      color: #d81b60;
+      margin: 20px 0 15px 0;
+      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.3); }
+      70% { transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* ==========================================
+       ANIMATED BIRTHDAY CAKE (Page 1 Cake)
+       ========================================== */
+    .cake-container {
+      position: relative;
+      width: 160px;
+      height: 130px;
+      margin: 25px auto 35px auto;
+    }
+
+    .cake {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+    }
+
+    .plate {
+      width: 170px;
+      height: 10px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      position: absolute;
+      bottom: 0;
+      left: -10px;
+    }
+
+    .layer {
+      position: relative;
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .layer-bottom {
+      height: 48px;
+      background: #f8bbd0;
+      border-bottom: 4px solid #f48fb1;
+    }
+
+    .layer-top {
+      width: 110px;
+      height: 38px;
+      background: #ffffff;
+      margin: 0 auto;
+      border-bottom: 4px solid #f8bbd0;
+    }
+
+    .frosting {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 10px;
+      background: #ff80ab;
+      border-radius: 8px 8px 4px 4px;
+    }
+
+    .candle {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 22px;
+      background: linear-gradient(to bottom, #ffd54f, #ffb300);
+      border-radius: 3px;
+    }
+
+    .flame {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      width: 12px;
+      height: 16px;
+      background: #ff9800;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 10px #ffc107, 0 0 16px #ff9800;
+      will-change: transform, opacity;
+      animation: flicker 0.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(0.92); opacity: 0.85; }
+      100% { transform: translateX(-50%) scale(1.12); opacity: 1; }
+    }
+
+    /* ==========================================
+       BUTTON & HOVER EFFECTS
+       ========================================== */
+    .btn-surprise {
+      display: inline-block;
+      background: linear-gradient(135deg, #ff4081, #ff80ab);
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 15px 34px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 64, 129, 0.35);
+      will-change: transform;
+      animation: gentleBounce 2s infinite ease-in-out;
+      outline: none;
+    }
+
+    .btn-surprise:hover {
+      transform: translate3d(0, -3px, 0) scale(1.04);
+      box-shadow: 0 12px 25px rgba(255, 64, 129, 0.5);
+    }
+
+    .btn-back {
+      display: inline-block;
+      margin-top: 18px;
+      background: rgba(255, 255, 255, 0.85);
+      color: #0288d1;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 10px 24px;
+      border: 2px solid #81d4fa;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background: #0288d1;
+      color: #ffffff;
+    }
+
+    @keyframes gentleBounce {
+      0%, 20%, 50%, 80%, 100% { transform: translate3d(0, 0, 0); }
+      40% { transform: translate3d(0, -10px, 0); }
+      60% { transform: translate3d(0, -5px, 0); }
+    }
+
+    /* ==========================================
+       PAGE 2 COMPONENTS
+       ========================================== */
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 620px;
+      margin: 20px auto;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #000;
+      border: 2px solid #81d4fa;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 16px;
+    }
+
+    .footer-text {
+      margin-top: 25px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0277bd;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 600px) {
+      h1 { font-size: 2.4rem; }
+      .celebration-text { font-size: 2.3rem; }
+      p.message { font-size: 1rem; }
+      .glass-card { padding: 28px 18px; }
+      .btn-surprise { font-size: 1rem; padding: 13px 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Light Overlays -->
+  <div class="glowing-light light-1"></div>
+  <div class="glowing-light light-2"></div>
+
+  <!-- High Performance Canvas for Floating Particles -->
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-container">
+    
+    <!-- PAGE 0: INTRO BIG CAKE CUTTING -->
+    <div id="page-0" class="page active">
+      <div class="glass-card">
+        
+        <div class="decor-row">✨ 🎂 🎈 🎂 ✨</div>
+
+        <h1 id="intro-title">  .. ✨ Make a Wish ✨  ..     🎗️Aaradhya🎗️</h1>
+        <p class="message" id="intro-subtext">Click the button below to blow out candles and cut your birthday cake! 💖</p>
+
+        <!-- Big Cake Wrapper -->
+        <div class="big-cake-wrapper">
+          <div class="knife" id="knife">🔪</div>
+          
+          <div class="big-cake" id="bigCake">
+            <div class="candles-row">
+              <div class="big-candle"><div class="big-flame"></div></div>
+              <div class="big-candle"><div class="big-flame"></div></div>
+              <div class="big-candle"><div class="big-flame"></div></div>
+            </div>
+            
+            <div class="big-layer big-layer-3"></div>
+            <div class="big-layer big-layer-2"></div>
+            <div class="big-layer big-layer-1"></div>
+            <div class="big-plate"></div>
+          </div>
+        </div>
+
+        <!-- Animated Greeting Text (Hidden Initially) -->
+        <div id="celebration-text" class="celebration-text">
+          <pre>   🎉 Happy Birthday 🎉     
+ 💖🎂 Aaradhya 🎂💖</pre>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <!-- Cut Cake Button -->
+          <button class="btn-surprise" id="cutCakeBtn">
+            ✨ Click Me to Cut Cake! 🎂
+          </button>
+
+          <!-- Next Page Button (Hidden Initially) -->
+          <button class="btn-surprise" id="nextToWishesBtn" style="display: none; background: linear-gradient(135deg, #0288d1, #26c6da);">
+            Read Your Birthday Message 💌 ➡️
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAGE 1: WISHES MESSAGE & CAKE -->
+    <div id="page-1" class="page">
+      <div class="glass-card">
+        
+        <div class="decor-row">🌸 🎁 💖 🎁 🌸</div>
+
+         <h1>🎉Happy Birthday🎉<br> 🎂💖Aaradhya! 🎂💖</h1>
+        
+        <p class="message">
+          Happy Birthday to my favorite mini-human and the best little sister in the world!
+           You might be short in height and younger in age, but you definitely take up the absolute biggest space in my heart.
+            Life with you is an endless comedy show—between your non-stop chatter, your cute drama, and the fact that I literally have to look down to talk to you 😜.
+             Thank you for bringing so much laughter and sweet energy into my life. 
+             I hope this year brings you all the happiness you deserve, tons of treats, and maybe even a surprise height boost! Stay silly, stay blessed, and have the best birthday ever, kiddo! ❤️✨
+        </p>
+
+
+        <!-- Cake -->
+        <div class="cake-container">
+          <div class="cake">
+            <div class="candle">
+              <div class="flame"></div>
+            </div>
+            <div class="layer layer-top">
+              <div class="frosting"></div>
+            </div>
+            <div class="layer layer-bottom">
+              <div class="frosting"></div>
+            </div>
+            <div class="plate"></div>
+          </div>
+        </div>
+
+        <div class="decor-row" style="margin-bottom: 20px;">✨ 🎈 🌺 🎈 ✨</div>
+
+        <button class="btn-surprise" id="surpriseBtn">
+          🚫 Don't Click Here 🤫
+        </button>
+
+      </div>
+    </div>
+
+    <!-- PAGE 2: VIDEO SURPRISE -->
+    <div id="page-2" class="page">
+      <div class="glass-card">
+        
+        <div class="decor-row">⭐ 💙 🕊️ 💙 ⭐</div>
+
+        <h2>💙 🎶 Dance to banta h 🎶 💙</h2>
+        
+        <p class="message">
+          🤩 Yaaannnnnnnnnn 🤩
+        </p>
+
+        <!-- Video Container -->
+        <div class="video-container">
+          <video id="birthdayVideo" playsinline autoplay loop preload="auto">
+            <source src="aaradhya.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+
+        <div class="footer-text">
+          Made with ❤️ by Your Big Brother Kartik 😎
+        </div>
+
+        <!-- Back Button Page 2 -->
+        <button class="btn-back" id="backBtn">
+          🍔party chaiye meko🍔
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // PAGE NAVIGATION & CAKE CUTTING LOGIC
+    // ==========================================
+    const cutCakeBtn = document.getElementById('cutCakeBtn');
+    const nextToWishesBtn = document.getElementById('nextToWishesBtn');
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    const backBtn = document.getElementById('backBtn');
+
+    const page0 = document.getElementById('page-0');
+    const page1 = document.getElementById('page-1');
+    const page2 = document.getElementById('page-2');
+
+    const birthdayVideo = document.getElementById('birthdayVideo');
+    const knife = document.getElementById('knife');
+    const flames = document.querySelectorAll('.big-flame');
+    const celebrationText = document.getElementById('celebration-text');
+    const introTitle = document.getElementById('intro-title');
+    const introSubtext = document.getElementById('intro-subtext');
+
+    // 1. Cut Cake Action
+    cutCakeBtn.addEventListener('click', () => {
+      // Step A: Blow Candles Out
+      flames.forEach(f => f.classList.add('out'));
+
+      // Step B: Knife Slicing Animation
+      knife.classList.add('slice-anim');
+
+      // Step C: Confetti Burst
+      setTimeout(() => {
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 120,
+            spread: 90,
+            origin: { y: 0.6 }
+          });
+        }
+      }, 500);
+
+      // Step D: Show Celebration Text & Next Button
+      setTimeout(() => {
+        cutCakeBtn.style.display = 'none';
+        introTitle.style.display = 'none';
+        introSubtext.style.display = 'none';
+
+        celebrationText.style.display = 'block';
+        nextToWishesBtn.style.display = 'inline-block';
+      }, 1000);
+    });
+
+    // 2. Navigation Functions with Mobile History Support
+    function showPage(pageNumber, pushState = true) {
+      page0.classList.remove('active');
+      page1.classList.remove('active');
+      page2.classList.remove('active');
+
+      document.body.classList.remove('page-2-active');
+
+      if (birthdayVideo) {
+        birthdayVideo.pause();
+      }
+
+      setTimeout(() => {
+        if (pageNumber === 0) {
+          page0.classList.add('active');
+        } else if (pageNumber === 1) {
+          page1.classList.add('active');
+        } else if (pageNumber === 2) {
+          page2.classList.add('active');
+          document.body.classList.add('page-2-active');
+          if (birthdayVideo) {
+            birthdayVideo.play().catch(e => console.log('Autoplay handled:', e));
+          }
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300);
+
+      if (pushState) {
+        history.pushState({ page: pageNumber }, '', `#page-${pageNumber}`);
+      }
+    }
+
+    // Event Listeners for Page Switching
+    nextToWishesBtn.addEventListener('click', () => showPage(1, true));
+    surpriseBtn.addEventListener('click', () => showPage(2, true));
+
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        history.back();
+      });
+    }
+
+    // Mobile Phone Physical / Gesture Back Button Handling
+    window.addEventListener('popstate', (event) => {
+      if (event.state && typeof event.state.page === 'number') {
+        showPage(event.state.page, false);
+      } else {
+        showPage(0, false);
+      }
+    });
+
+    // Set Initial State
+    history.replaceState({ page: 0 }, '', '#page-0');
+
+
+    // ==========================================
+    // 60 FPS CANVAS PARTICLE ENGINE (Zero Lag)
+    // ==========================================
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const symbols = ['💖', '💗', '💕', '✨', '⭐', '🎈', '🌸', '🎁', '🎀'];
+    const particleCount = 22; // Kept light for optimal mobile performance
+    const particles = [];
+
+    class Particle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * width;
+        this.y = initial ? Math.random() * height : height + 30;
+        this.speed = 1 + Math.random() * 1.8;
+        this.size = 18 + Math.random() * 16;
+        this.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        this.opacity = 0.2 + Math.random() * 0.7;
+        this.swingAmplitude = 0.5 + Math.random() * 1.5;
+        this.swingSpeed = 0.01 + Math.random() * 0.02;
+        this.angle = Math.random() * Math.PI * 2;
+      }
+
+      update() {
+        this.y -= this.speed;
+        this.angle += this.swingSpeed;
+        this.x += Math.sin(this.angle) * this.swingAmplitude;
+
+        if (this.y < -40) {
+          this.reset(false);
+        }
+      }
+
+      draw() {
+        ctx.globalAlpha = this.opacity;
+        ctx.font = `${this.size}px sans-serif`;
+        ctx.fillText(this.symbol, this.x, this.y);
+      }
+    }
+
+    // Initialize Particles
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    // Animation Loop
+    function render() {
+      ctx.clearRect(0, 0, width, height);
+      
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      
+      requestAnimationFrame(render);
+    }
+
+    // Start 60fps Loop
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>
+
